@@ -1,2 +1,5 @@
 $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
-require 'easy/sms'
+require 'webmock'
+require 'easy_sms'
+
+WebMock.disable_net_connect!
