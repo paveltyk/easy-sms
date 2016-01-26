@@ -1,41 +1,105 @@
 # Easy::Sms
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/easy/sms`. To experiment with that code, run `bin/console` for an interactive prompt.
+The Easy SMS gem is a wrapper for Easy SMS API.
 
-TODO: Delete this and the text above, and describe your gem
+## Using with Ruby/Rails
 
-## Installation
+First of all you will need to install the easy-sms gem. And add it to a Gemfile if needed.
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'easy-sms'
+```
+$ gem install easy-sms
 ```
 
-And then execute:
+### Sending SMS
 
-    $ bundle
+You can send SMS right away with the `ENV['EASYSMS_URL']` and 'easy-sms' gem installed in your app. No additional configuration required.
 
-Or install it yourself as:
+Use `EasySMS::Client#messages.create(options)` to send SMS. Options:
 
-    $ gem install easy-sms
+* `to` - required. Recipient phone number in [E.164](http://en.wikipedia.org/wiki/E.164) format. Example: '+12067450316'
+* `from` - optional. Sender phone number in [E.164](http://en.wikipedia.org/wiki/E.164) format. Example: '+12067450316'
+* `body` - required. The text body of the message. Up to 1600 characters long.
 
-## Usage
+```ruby
+require 'easy-sms'
 
-TODO: Write usage instructions here
+# By default initializer will use the EASYSMS_URL config variable to configure the client instance.
+client = EasySMS::Client.new
+puts client.messages.create to: '+12067450316', body: 'Hello from Easy SMS.' #=> {"body"=>"Hello from Easy SMS.", "c_at"=>2016-01-25 13:58:38 UTC, "from"=>nil, "status"=>"pending", "to"=>"+12067450316", "uid"=>"56a62a0ebbf109000c000000"}
+# The received SMS can be seen at: http://sms-receive.net/12067450316-USA (free web service to receive SMS online)
+```
 
-## Development
+Note the status of SMS is 'pending', which mean the SMS is not delivered yet. It will take a few seconds to process the SMS. You may receive HTTP POST requests to the status callback URL once SMS delivery status change. To do so, please specify the `sms_status_url` for your account. [Read more](#configuring-easy-sms-account)
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+### Creating and releasing phone numbers
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+Use `EasySMS::Client#phone_numbers.create(options)` to create a phone number. Options:
 
-## Contributing
+* `country_code` - optional. Two-letter country code of the phone number. Default 'US'
+* `pattern` - optional. The pattern of the phone number. Default is nil. Example: '*******654'
+* `inbound_sms_url` - optional. The callback URL to be triggered when your phone number receives SMS. Example: 'http://api.example.com/sms/callback'
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/easy-sms. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+```ruby
+require 'easy-sms'
 
+client = EasySMS::Client.new
+phone_number = client.phone_numbers.create #=> {"inbound_sms_url"=>nil, "phone_number"=>"+12183011654", "primary"=>true, "uid"=>"56a630d53017290006000000", "country_code"=>"US"}
+puts "Purchased phone number #{phone_number['phone_number']}"
+client.phone_numbers.delete(phone_number['uid'])
+puts "Released phone number #{phone_number['phone_number']}"
+```
 
-## License
+The `EasySMS::Client#phone_numbers.delete(uid)` method is used to release a phone number. This method accepts one argument - phone number UID *(the one returned by EasySMS::Client#phone_numbers.create)*.
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+### Receiving SMS
+
+Any inbound SMS to one of your phone numbers will trigger a HTTP POST request to your callback URL. You may set the callback url on the phone number instance via the `EasySMS::Client#phone_numbers.update` method, or pass the `inbound_sms_url` option to `EasySMS::Client#phone_numbers.create` when you create a phone number.
+
+`EasySMS::Client#phone_numbers.update(uid, options)` accepts phone number UID and options:
+
+* `inbound_sms_url` - optional. The callback URL to be triggered when your phone number receives SMS. Example: 'http://api.example.com/sms/callback'
+
+```ruby
+require 'easy-sms'
+
+client = EasySMS::Client.new
+phone_numbers = client.phone_numbers.list
+uid = phone_numbers.list.first['uid']
+client.phone_numbers.update(uid, inbound_sms_url: 'http://api.example.com/sms/callback') #=> {message_uid: '56a21298778404d264000000', to: '+12183011654', from: '+12183011699', body: 'Hello there!', direction: 'inbound', c_at: '2016-01-22 14:53:04 UTC'}
+```
+
+The POST request to your callback URL will include these parameters:
+
+* `message_uid` - UID of the message. A 24 characters string.
+* `to` - recipient phone number (one of your phone numbers) in [E.164](http://en.wikipedia.org/wiki/E.164) format. Example: '+12067450316'
+* `from` - sender phone number in [E.164](http://en.wikipedia.org/wiki/E.164) format. Example: '+12067450399'
+* `body` - text body of SMS.
+* `direction` - 'inbound'.
+* `c_at` - time when SMS was received. Example: '2016-01-22 14:53:04 UTC'
+
+### Configuring Easy SMS Account
+
+You may want to fine tune your account. To check current account state run `EasySMS::client.account.get`. The result is a hash with valuable information for current account status and configuration.
+
+Use `EasySMS::client.account.update(options)` to update your account configuration. Options:
+
+* `sms_status_url` - optional. The callback URL to be triggered when SMS status change. Example: ‘http://api.example.com/sms-status/callback’
+
+```ruby
+client = EasySMS::Client.new
+client.account.get #=> {"plan"=>"gold", "sms_status_url"=>nil, "uid"=>"56a21186778404d266000001"}
+client.account.update(sms_status_url: 'http://api.example.com/sms-status/callback') #=> {"plan"=>"gold", "sms_status_url"=>"http://api.example.com/sms-status/callback", "uid"=>"56a21186778404d266000001"}
+```
+
+## Local Setup
+
+After provisioning the add-on it’s necessary to locally replicate the config vars so your development environment can operate against the service.
+
+Use the **Foreman** gem for example to run a commands within environment loaded from `.env` file. Add the `EASYSMS_URL` variable to your `.env` file.
+
+```
+EASYSMS_URL=https://<account_id>:<token>@api.easysmsapp.com/accounts/<account_id>
+```
+
+Though less portable it’s also possible to run a script using `export EASYSMS_URL=https://<account_id>:<token>@api.easysmsapp.com/accounts/<account_id> ruby script.rb`.
 
