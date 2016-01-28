@@ -24,6 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "webmock", "~> 1.22"
 
-  spec.add_dependency 'rest-client', '1.8.0'
-  spec.add_dependency 'json', '1.8.3'
+  spec.add_dependency 'rest-client', '~> 1.8'
+  spec.add_dependency 'json', '~> 1.8'
 end
