@@ -3,6 +3,7 @@ require 'json'
 require 'rest-client'
 
 require "easy_sms/version"
+require "easy_sms/error"
 require "easy_sms/client"
 require "easy_sms/account_resource"
 require "easy_sms/message_resource"
