@@ -1,6 +1,6 @@
-# Easy::Sms
+# Easy SMS
 
-The Easy SMS gem is a wrapper for Easy SMS API.
+The Easy SMS gem is a wrapper for Easy SMS API. Currently Easy SMS API available as a Heroku add-on [Easy SMS](https://elements.heroku.com/addons/easysms) only.
 
 ## Using with Ruby/Rails
 
