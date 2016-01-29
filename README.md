@@ -1,5 +1,7 @@
 # Easy SMS
 
+[![Build Status](https://travis-ci.org/PavelTyk/easy-sms.svg?branch=master)](https://travis-ci.org/PavelTyk/easy-sms)
+
 The Easy SMS gem is a wrapper for Easy SMS API. Currently Easy SMS API available as a Heroku add-on [Easy SMS](https://elements.heroku.com/addons/easysms) only.
 
 ## Using with Ruby/Rails
