@@ -13,15 +13,15 @@ describe 'EasySMS::Client.phone_numbers' do
       stub_request(:get, valid_url + '/phone_numbers').to_return(status: 200, body: valid_response.to_json)
 
       phone_numbers = EasySMS::Client.new.phone_numbers.list
-      phone_numbers.size.should eq(1)
+      expect(phone_numbers.size).to eq(1)
 
       phone_number = phone_numbers.first
-      phone_number.size.should eq(5)
-      phone_number['uid'].should eq(valid_response.first[:uid])
-      phone_number['phone_number'].should eq(valid_response.first[:phone_number])
-      phone_number['primary'].should eq(valid_response.first[:primary])
-      phone_number['inbound_sms_url'].should eq(valid_response.first[:inbound_sms_url])
-      phone_number['country_code'].should eq(valid_response.first[:country_code])
+      expect(phone_number.size).to eq(5)
+      expect(phone_number['uid']).to eq(valid_response.first[:uid])
+      expect(phone_number['phone_number']).to eq(valid_response.first[:phone_number])
+      expect(phone_number['primary']).to eq(valid_response.first[:primary])
+      expect(phone_number['inbound_sms_url']).to eq(valid_response.first[:inbound_sms_url])
+      expect(phone_number['country_code']).to eq(valid_response.first[:country_code])
     end
   end
 
@@ -34,12 +34,12 @@ describe 'EasySMS::Client.phone_numbers' do
       stub_request(:post, valid_url + '/phone_numbers').to_return(status: 200, body: valid_response.to_json)
 
       phone_number = EasySMS::Client.new.phone_numbers.create
-      phone_number.size.should eq(5)
-      phone_number['uid'].should eq(valid_response[:uid])
-      phone_number['phone_number'].should eq(valid_response[:phone_number])
-      phone_number['primary'].should eq(valid_response[:primary])
-      phone_number['inbound_sms_url'].should eq(valid_response[:inbound_sms_url])
-      phone_number['country_code'].should eq(valid_response[:country_code])
+      expect(phone_number.size).to eq(5)
+      expect(phone_number['uid']).to eq(valid_response[:uid])
+      expect(phone_number['phone_number']).to eq(valid_response[:phone_number])
+      expect(phone_number['primary']).to eq(valid_response[:primary])
+      expect(phone_number['inbound_sms_url']).to eq(valid_response[:inbound_sms_url])
+      expect(phone_number['country_code']).to eq(valid_response[:country_code])
     end
 
     it 'do POST to /phone_numbers with params' do
@@ -47,12 +47,12 @@ describe 'EasySMS::Client.phone_numbers' do
       stub_request(:post, valid_url + '/phone_numbers').with(body: params.to_json).to_return(status: 200, body: valid_response.to_json)
 
       phone_number = EasySMS::Client.new.phone_numbers.create(params)
-      phone_number.size.should eq(5)
-      phone_number['uid'].should eq(valid_response[:uid])
-      phone_number['phone_number'].should eq(valid_response[:phone_number])
-      phone_number['primary'].should eq(valid_response[:primary])
-      phone_number['inbound_sms_url'].should eq(valid_response[:inbound_sms_url])
-      phone_number['country_code'].should eq(valid_response[:country_code])
+      expect(phone_number.size).to eq(5)
+      expect(phone_number['uid']).to eq(valid_response[:uid])
+      expect(phone_number['phone_number']).to eq(valid_response[:phone_number])
+      expect(phone_number['primary']).to eq(valid_response[:primary])
+      expect(phone_number['inbound_sms_url']).to eq(valid_response[:inbound_sms_url])
+      expect(phone_number['country_code']).to eq(valid_response[:country_code])
     end
   end
 
@@ -66,12 +66,12 @@ describe 'EasySMS::Client.phone_numbers' do
       stub_request(:put, "#{valid_url}/phone_numbers/#{valid_response[:uid]}").with(body: params.to_json).to_return(status: 200, body: valid_response.to_json)
 
       phone_number = EasySMS::Client.new.phone_numbers.update(valid_response[:uid], params)
-      phone_number.size.should eq(5)
-      phone_number['uid'].should eq(valid_response[:uid])
-      phone_number['phone_number'].should eq(valid_response[:phone_number])
-      phone_number['primary'].should eq(valid_response[:primary])
-      phone_number['inbound_sms_url'].should eq(valid_response[:inbound_sms_url])
-      phone_number['country_code'].should eq(valid_response[:country_code])
+      expect(phone_number.size).to eq(5)
+      expect(phone_number['uid']).to eq(valid_response[:uid])
+      expect(phone_number['phone_number']).to eq(valid_response[:phone_number])
+      expect(phone_number['primary']).to eq(valid_response[:primary])
+      expect(phone_number['inbound_sms_url']).to eq(valid_response[:inbound_sms_url])
+      expect(phone_number['country_code']).to eq(valid_response[:country_code])
     end
   end
 
@@ -84,12 +84,12 @@ describe 'EasySMS::Client.phone_numbers' do
       stub_request(:delete, "#{valid_url}/phone_numbers/#{valid_response[:uid]}").to_return(status: 200, body: valid_response.to_json)
 
       phone_number = EasySMS::Client.new.phone_numbers.delete(valid_response[:uid])
-      phone_number.size.should eq(5)
-      phone_number['uid'].should eq(valid_response[:uid])
-      phone_number['phone_number'].should eq(valid_response[:phone_number])
-      phone_number['primary'].should eq(valid_response[:primary])
-      phone_number['inbound_sms_url'].should eq(valid_response[:inbound_sms_url])
-      phone_number['country_code'].should eq(valid_response[:country_code])
+      expect(phone_number.size).to eq(5)
+      expect(phone_number['uid']).to eq(valid_response[:uid])
+      expect(phone_number['phone_number']).to eq(valid_response[:phone_number])
+      expect(phone_number['primary']).to eq(valid_response[:primary])
+      expect(phone_number['inbound_sms_url']).to eq(valid_response[:inbound_sms_url])
+      expect(phone_number['country_code']).to eq(valid_response[:country_code])
     end
   end
 end

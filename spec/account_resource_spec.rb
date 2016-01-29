@@ -13,10 +13,10 @@ describe 'EasySMS::Client#account' do
       stub_request(:get, valid_url + '/').to_return(status: 200, body: valid_response.to_json)
 
       account = EasySMS::Client.new.account.get
-      account.size.should eq(3)
-      account['uid'].should eq(valid_response[:uid])
-      account['sms_status_url'].should eq(valid_response[:sms_status_url])
-      account['plan'].should eq(valid_response[:plan])
+      expect(account.size).to eq(3)
+      expect(account['uid']).to eq(valid_response[:uid])
+      expect(account['sms_status_url']).to eq(valid_response[:sms_status_url])
+      expect(account['plan']).to eq(valid_response[:plan])
     end
   end
 
@@ -30,10 +30,10 @@ describe 'EasySMS::Client#account' do
       stub_request(:put, valid_url + '/').with(body: params.to_json).to_return(status: 200, body: valid_response.to_json)
 
       account = EasySMS::Client.new.account.update(params)
-      account.size.should eq(3)
-      account['uid'].should eq(valid_response[:uid])
-      account['sms_status_url'].should eq(valid_response[:sms_status_url])
-      account['plan'].should eq(valid_response[:plan])
+      expect(account.size).to eq(3)
+      expect(account['uid']).to eq(valid_response[:uid])
+      expect(account['sms_status_url']).to eq(valid_response[:sms_status_url])
+      expect(account['plan']).to eq(valid_response[:plan])
     end
   end
 end

@@ -14,14 +14,14 @@ describe 'EasySMS::Client#messages' do
 
       message = EasySMS::Client.new.messages.create
 
-      message.size.should eq(7)
-      message['uid'].should eq(valid_response[:uid])
-      message['to'].should eq(valid_response[:to])
-      message['from'].should eq(valid_response[:from])
-      message['body'].should eq(valid_response[:body])
-      message['status'].should eq(valid_response[:status])
-      message['c_at'].should eq(Time.parse(valid_response[:c_at]))
-      message['error_message'].should eq(valid_response[:error_message])
+      expect(message.size).to eq(7)
+      expect(message['uid']).to eq(valid_response[:uid])
+      expect(message['to']).to eq(valid_response[:to])
+      expect(message['from']).to eq(valid_response[:from])
+      expect(message['body']).to eq(valid_response[:body])
+      expect(message['status']).to eq(valid_response[:status])
+      expect(message['c_at']).to eq(Time.parse(valid_response[:c_at]))
+      expect(message['error_message']).to eq(valid_response[:error_message])
     end
   end
 end
